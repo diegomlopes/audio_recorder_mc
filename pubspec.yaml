@@ -2,7 +2,7 @@ name: audio_recorder_mc
 description: A new flutter plugin project.
 version: 0.0.1
 author: Diego Lopes
-homepage:
+homepage: https://github.com/diegomlopes/audio_recorder_mc
 
 environment:
   sdk: ">=2.7.0 <3.0.0"

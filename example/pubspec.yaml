@@ -1,5 +1,7 @@
 name: audio_recorder_mc_example
 description: Demonstrates how to use the audio_recorder_mc plugin.
+author: Diego Lopes
+homepage: https://github.com/diegomlopes/audio_recorder_mc
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
