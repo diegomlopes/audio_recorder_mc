@@ -22,7 +22,7 @@ class AudioRecorderMc {
                     print('Permission has been denied');
                   });
                   
-    final String log = await _startRecordChannel.invokeMethod('com.masterconcept.audiorecorder/start');
+    await _startRecordChannel.invokeMethod('com.masterconcept.audiorecorder/start');
 
     return _eventChannel.receiveBroadcastStream();
   }
