@@ -1,3 +1,3 @@
-## 0.0.3
+## 1.0.0
 
-* TODO: Read.me and plugin description updated.
+* TODO: First validated version.

@@ -9,26 +9,27 @@ class AudioRecorderMc {
   AudioRecorderMc({this.sampleRate});
   static const MethodChannel _startRecordChannel =
       const MethodChannel('com.masterconcept.audiorecorder/start');
-  
+
   static const MethodChannel _stopRecordChannel =
       const MethodChannel('com.masterconcept.audiorecorder/stop');
-  
-  static const EventChannel _eventChannel = 
+
+  static const EventChannel _eventChannel =
       const EventChannel('com.masterconcept.audiorecorder/samples');
 
   Future<Stream<dynamic>> get startRecord async {
-    PermissionsService().requestMicrophonePermission(
-                  onPermissionDenied: () {
-                    print('Permission has been denied');
-                  });
-                  
-    await _startRecordChannel.invokeMethod('com.masterconcept.audiorecorder/start');
+    PermissionsService().requestMicrophonePermission(onPermissionDenied: () {
+      print('Permission has been denied');
+    });
+
+    await _startRecordChannel
+        .invokeMethod('com.masterconcept.audiorecorder/start');
 
     return _eventChannel.receiveBroadcastStream();
   }
 
   Future<String> get stopRecord async {
-    final String log = await _stopRecordChannel.invokeMethod('com.masterconcept.audiorecorder/stop');
+    final String log = await _stopRecordChannel
+        .invokeMethod('com.masterconcept.audiorecorder/stop');
     return log;
   }
 }
@@ -44,8 +45,9 @@ class PermissionsService {
     return false;
   }
 
-   /// Requests the users permission to read their contacts.
-  Future<bool> requestMicrophonePermission({Function onPermissionDenied}) async {
+  /// Requests the users permission to read their contacts.
+  Future<bool> requestMicrophonePermission(
+      {Function onPermissionDenied}) async {
     var granted = await _requestPermission(PermissionGroup.microphone);
     if (!granted) {
       onPermissionDenied();
@@ -62,5 +64,4 @@ class PermissionsService {
         await _permissionHandler.checkPermissionStatus(permission);
     return permissionStatus == PermissionStatus.granted;
   }
-
 }

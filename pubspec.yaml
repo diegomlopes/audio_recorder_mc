@@ -1,6 +1,6 @@
 name: audio_recorder_mc
 description: This is a flutter plugin for recording audio for Android and IOS. You can read the samples from the microphone and choose the desired sample rate.
-version: 0.0.3
+version: 1.0.0
 homepage: https://github.com/diegomlopes/audio_recorder_mc
 
 environment:
