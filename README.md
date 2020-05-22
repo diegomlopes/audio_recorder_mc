@@ -1,6 +1,6 @@
 # audio_recorder_mc
 
-A new flutter plugin project.
+A flutter plugin to record audio to IOS and Android.
 
 ## Getting Started
 
