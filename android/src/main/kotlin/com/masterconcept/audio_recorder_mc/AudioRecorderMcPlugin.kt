@@ -49,13 +49,15 @@ public class AudioRecorderMcPlugin: FlutterPlugin, MethodCallHandler, EventChann
   companion object {
     @JvmStatic
     fun registerWith(registrar: Registrar) {
-      Log.i("teste", "Entrou register")
+      Log.i("test", "begin method registration")
+      val initChannel = MethodChannel(registrar.messenger(), "com.masterconcept.audiorecorder/init")
       val startRecordChannel = MethodChannel(registrar.messenger(), "com.masterconcept.audiorecorder/start")
       val stopRecordChannel = MethodChannel(registrar.messenger(), "com.masterconcept.audiorecorder/stop")
       var samplesRecordChannel = EventChannel(registrar.messenger(), "com.masterconcept.audiorecorder/samples")
 
       var instance = AudioRecorderMcPlugin()
 
+      initChannel.setMethodCallHandler(instance)
       startRecordChannel.setMethodCallHandler(instance)
       stopRecordChannel.setMethodCallHandler(instance)
       samplesRecordChannel.setStreamHandler(instance)
@@ -66,15 +68,23 @@ public class AudioRecorderMcPlugin: FlutterPlugin, MethodCallHandler, EventChann
   @RequiresApi(Build.VERSION_CODES.M)
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     if (call.method == "com.masterconcept.audiorecorder/start") {
-      Log.i("teste", "entrou start")
+      Log.i("test", "begin recording start")
       recorder.startRecording()
-      result.success("Gravando")
-      print("Gravando")
+      result.success("Recording")
+      Log.i("test", "recording started")
     }
     else if (call.method == "com.masterconcept.audiorecorder/stop") {
+      Log.i("test", "begin recording stop")
       recorder.stopRecording()
-      result.success("Stop")
-      print("Parou")
+      result.success("Stopped")
+      Log.i("test", "recording stopped")
+    }
+    else if (call.method == "com.masterconcept.audiorecorder/init") {
+      val rate = call.arguments['sampleRate']
+      Log.i("test", "initializing with sample rate of $rate")
+      recorder.setRate(rate)
+      result.success("Success")
+      Log.i("test", "initialized with sample rate")
     }
     else {
       result.notImplemented()
@@ -94,7 +104,7 @@ public class AudioRecorderMcPlugin: FlutterPlugin, MethodCallHandler, EventChann
   override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
     if (events != null) {
       recorder.mEventSink = events
-      Log.i("teste", "entrou listen")
+      Log.i("teste", "beginning event stream")
       mEventSink = events
     }
   }

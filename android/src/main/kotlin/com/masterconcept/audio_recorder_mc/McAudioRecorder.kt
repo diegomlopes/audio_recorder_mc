@@ -18,10 +18,10 @@ class McAudioRecorder : Runnable {
     private var LOG_TAG = "Microphone"
     var mainHandler: Handler = Handler(Looper.getMainLooper())
 
-    private val SAMPLING_RATE_IN_HZ = 44100
     private val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
     private val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_FLOAT
-    private val BUFFER_SIZE_FACTOR = 2
+    private val BUFFER_SIZE_FACTOR = 1
+    private val SAMPLING_RATE_IN_HZ = 44100
     private val BUFFER_SIZE = AudioRecord.getMinBufferSize(SAMPLING_RATE_IN_HZ,
             CHANNEL_CONFIG, AUDIO_FORMAT) * BUFFER_SIZE_FACTOR
 
@@ -32,6 +32,12 @@ class McAudioRecorder : Runnable {
     private var recordingThread: Thread? = null
 
     var mEventSink: EventChannel.EventSink? = null
+
+    fun setRate(sampleRate) {
+        SAMPLING_RATE_IN_HZ = sampleRate
+        BUFFER_SIZE = AudioRecord.getMinBufferSize(SAMPLING_RATE_IN_HZ,
+            CHANNEL_CONFIG, AUDIO_FORMAT) * BUFFER_SIZE_FACTOR
+    }
 
     fun startRecording() {
         recorder = AudioRecord(MediaRecorder.AudioSource.DEFAULT, SAMPLING_RATE_IN_HZ,
