@@ -21,8 +21,9 @@ class McAudioRecorder : Runnable {
     private val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
     private val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_FLOAT
     private val BUFFER_SIZE_FACTOR = 1
-    private val SAMPLING_RATE_IN_HZ = 44100
-    private val BUFFER_SIZE = AudioRecord.getMinBufferSize(SAMPLING_RATE_IN_HZ,
+
+    private var SAMPLING_RATE_IN_HZ = 44100
+    private var BUFFER_SIZE = AudioRecord.getMinBufferSize(SAMPLING_RATE_IN_HZ,
             CHANNEL_CONFIG, AUDIO_FORMAT) * BUFFER_SIZE_FACTOR
 
     private val recordingInProgress: AtomicBoolean = AtomicBoolean(false)
@@ -33,7 +34,7 @@ class McAudioRecorder : Runnable {
 
     var mEventSink: EventChannel.EventSink? = null
 
-    fun setRate(sampleRate) {
+    fun setRate(sampleRate: Int) {
         SAMPLING_RATE_IN_HZ = sampleRate
         BUFFER_SIZE = AudioRecord.getMinBufferSize(SAMPLING_RATE_IN_HZ,
             CHANNEL_CONFIG, AUDIO_FORMAT) * BUFFER_SIZE_FACTOR

@@ -8,16 +8,21 @@ import 'package:permission_handler/permission_handler.dart';
 class AudioRecorderMc {
   AudioRecorderMc();
 
-  static const MethodChannel _initChannel = const MethodChannel('com.masterconcept.audiorecorder/init');
-  static const MethodChannel _startRecordChannel = const MethodChannel('com.masterconcept.audiorecorder/start');
+  static const MethodChannel _initChannel =
+      const MethodChannel('com.masterconcept.audiorecorder/setRate');
+  static const MethodChannel _startRecordChannel =
+      const MethodChannel('com.masterconcept.audiorecorder/start');
 
-  static const MethodChannel _stopRecordChannel = const MethodChannel('com.masterconcept.audiorecorder/stop');
+  static const MethodChannel _stopRecordChannel =
+      const MethodChannel('com.masterconcept.audiorecorder/stop');
 
-  static const EventChannel _eventChannel = const EventChannel('com.masterconcept.audiorecorder/samples');
+  static const EventChannel _eventChannel =
+      const EventChannel('com.masterconcept.audiorecorder/samples');
 
   /// sampleRate defaults to 44100
   Future setRate([int rate = 44100]) async {
-    await _initChannel.invokeMethod('com.masterconcept.audiorecorder/init', {'sampleRate': rate});
+    await _initChannel
+        .invokeMethod('com.masterconcept.audiorecorder/setRate', {'sampleRate': rate});
   }
 
   Future<Stream<dynamic>> get startRecord async {
@@ -31,7 +36,8 @@ class AudioRecorderMc {
   }
 
   Future<String> get stopRecord async {
-    final String log = await _stopRecordChannel.invokeMethod('com.masterconcept.audiorecorder/stop');
+    final String log =
+        await _stopRecordChannel.invokeMethod('com.masterconcept.audiorecorder/stop');
     return log;
   }
 }
