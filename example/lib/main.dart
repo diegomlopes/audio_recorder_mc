@@ -19,7 +19,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-  var recorder = AudioRecorderMc(sampleRate: 8820);
+  var recorder = AudioRecorderMc()..setup(sampleRate: 8820);
   Stream<double> samples;
 
   void startRecord() {
@@ -52,12 +52,13 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: Column(
             children: [
-              RaisedButton(onPressed: () {
-                                          this.isRecording ? stopRecord() : startRecord();
-                                        },
-                            child: Text(this.isRecording ? 'Stop' : 'Start')),
+              RaisedButton(
+                  onPressed: () {
+                    this.isRecording ? stopRecord() : startRecord();
+                  },
+                  child: Text(this.isRecording ? 'Stop' : 'Start')),
             ],
-          )
+          ),
         ),
       ),
     );

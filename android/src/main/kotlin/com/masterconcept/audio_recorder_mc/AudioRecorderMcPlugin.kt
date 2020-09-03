@@ -21,6 +21,7 @@ public class AudioRecorderMcPlugin: FlutterPlugin, MethodCallHandler, EventChann
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
+  private lateinit var setupChannel : MethodChannel
   private lateinit var startRecordChannel : MethodChannel
   private lateinit var stopRecordChannel : MethodChannel
   private lateinit var samplesRecordChannel : EventChannel
@@ -28,10 +29,12 @@ public class AudioRecorderMcPlugin: FlutterPlugin, MethodCallHandler, EventChann
   private var recorder = McAudioRecorder()
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+    setupChannel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "com.masterconcept.audiorecorder/setup")
     startRecordChannel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "com.masterconcept.audiorecorder/start")
     stopRecordChannel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "com.masterconcept.audiorecorder/stop")
     samplesRecordChannel = EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "com.masterconcept.audiorecorder/samples")
 
+    setupChannel.setMethodCallHandler(this);
     startRecordChannel.setMethodCallHandler(this);
     stopRecordChannel.setMethodCallHandler(this);
     samplesRecordChannel.setStreamHandler(this);
@@ -49,13 +52,16 @@ public class AudioRecorderMcPlugin: FlutterPlugin, MethodCallHandler, EventChann
   companion object {
     @JvmStatic
     fun registerWith(registrar: Registrar) {
-      Log.i("teste", "Entrou register")
+      Log.i("audio_recorder_mc_debug", "begin method registration")
+      val setupChannel = MethodChannel(registrar.messenger(), "com.masterconcept.audiorecorder/setup")
+      val setFormatChannel = MethodChannel(registrar.messenger(), "com.masterconcept.audiorecorder/setFormat")
       val startRecordChannel = MethodChannel(registrar.messenger(), "com.masterconcept.audiorecorder/start")
       val stopRecordChannel = MethodChannel(registrar.messenger(), "com.masterconcept.audiorecorder/stop")
       var samplesRecordChannel = EventChannel(registrar.messenger(), "com.masterconcept.audiorecorder/samples")
 
       var instance = AudioRecorderMcPlugin()
 
+      setupChannel.setMethodCallHandler(instance)
       startRecordChannel.setMethodCallHandler(instance)
       stopRecordChannel.setMethodCallHandler(instance)
       samplesRecordChannel.setStreamHandler(instance)
@@ -66,23 +72,47 @@ public class AudioRecorderMcPlugin: FlutterPlugin, MethodCallHandler, EventChann
   @RequiresApi(Build.VERSION_CODES.M)
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     if (call.method == "com.masterconcept.audiorecorder/start") {
-      Log.i("teste", "entrou start")
+      Log.i("audio_recorder_mc_debug", "begin recording start")
       recorder.startRecording()
-      result.success("Gravando")
-      print("Gravando")
+      result.success("Recording")
+      Log.i("audio_recorder_mc_debug", "recording started")
     }
     else if (call.method == "com.masterconcept.audiorecorder/stop") {
+      Log.i("audio_recorder_mc_debug", "begin recording stop")
       recorder.stopRecording()
-      result.success("Stop")
-      print("Parou")
+      result.success("Stopped")
+      Log.i("audio_recorder_mc_debug", "recording stopped")
+    }
+    else if (call.method == "com.masterconcept.audiorecorder/setup") {
+      val rate = call.argument<Int>("sampleRate") // actually returns an Int?
+      if (rate is Int) {
+        recorder.setRate(rate)
+        Log.i("audio_recorder_mc_debug", "sample rate set to $rate")
+      }
+
+      val format = call.argument<Int>("sampleFormat") // actually returns an Int?
+      if (format is Int) {
+        var formatString :String
+        if (format == 0) {
+          formatString = "pcm_8bit"
+          recorder.setBits(8)
+        } else if (format == 1) {
+          formatString = "pcm_16bit"
+          recorder.setBits(16)
+        } else {
+          formatString = "pcm_32float"
+          recorder.setBits(32)
+        }
+        Log.i("audio_recorder_mc_debug", "sample format set to $formatString")
+
+      }
+      val bufSize = recorder.getBufferSize()
+      Log.i("audio_recorder_mc_debug", "buffer is $bufSize bytes")
+      result.success(bufSize)
     }
     else {
       result.notImplemented()
     }
-
-//    if (mEventSink != null) {
-//    mEventSink.success(sample)
-//    }
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -94,7 +124,7 @@ public class AudioRecorderMcPlugin: FlutterPlugin, MethodCallHandler, EventChann
   override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
     if (events != null) {
       recorder.mEventSink = events
-      Log.i("teste", "entrou listen")
+      Log.i("audio_recorder_mc_debug", "beginning event stream")
       mEventSink = events
     }
   }
