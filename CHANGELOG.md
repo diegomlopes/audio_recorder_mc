@@ -1,3 +1,3 @@
-## 1.0.0
+## 1.0.5
 
-* TODO: First validated version.
+* New version permission handle.
