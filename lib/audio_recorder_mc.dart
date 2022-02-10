@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/services.dart';
@@ -27,7 +28,8 @@ class AudioRecorderMc {
     AudioRecorderFormat sampleFormat = AudioRecorderFormat.pcmFloat,
   }) {
     // this will populate the buffer size variable
-    ready = setup(sampleRate: sampleRate, sampleFormat: sampleFormat);
+    if (Platform.isAndroid)
+      ready = setup(sampleRate: sampleRate, sampleFormat: sampleFormat);
   }
 
   static const MethodChannel _setupChannel =
